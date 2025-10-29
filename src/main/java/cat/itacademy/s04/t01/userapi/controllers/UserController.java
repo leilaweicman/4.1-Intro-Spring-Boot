@@ -1,11 +1,11 @@
 package cat.itacademy.s04.t01.userapi.controllers;
 
 import cat.itacademy.s04.t01.userapi.models.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class UserController {
@@ -14,6 +14,15 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getUsers() {
         return new ArrayList<>(users);
+    }
+
+    @PostMapping("/users")
+    public User createUser(@RequestBody User user) {
+        System.out.println("📩 Received user: " + user.getName() + " - " + user.getEmail());
+
+        user.setId(UUID.randomUUID());
+        users.add(user);
+        return user;
     }
 
 }
