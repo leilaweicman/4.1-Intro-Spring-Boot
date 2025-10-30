@@ -49,4 +49,25 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name").value("Ada"))
                 .andExpect(jsonPath("$.email").value("ada@example.com"));
     }
+
+    @Test
+    void getUserById_returnsCorrectUser() throws Exception{
+        User newUser = new User("Grace", "grace@example.com");
+
+        String response = mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        User created = objectMapper.readValue(response, User.class);
+
+        mockMvc.perform(get("/users/" + created.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(created.getId().toString()))
+                .andExpect(jsonPath("$.name").value("Grace"))
+                .andExpect(jsonPath("$.email").value("grace@example.com"));
+    }
 }
