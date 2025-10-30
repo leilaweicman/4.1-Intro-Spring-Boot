@@ -24,7 +24,9 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(UUID id) {
-        return Optional.empty();
+        return users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst();
     }
 
     @Override
