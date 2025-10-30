@@ -52,11 +52,14 @@ public class InMemoryUserRepositoryTest {
         List<User> users = repository.searchByName("Ada");
 
         assertEquals(1, users.size());
-        assertEquals("Ada Lovelace", users.get(0).getName());
+        assertEquals("Ada", users.get(0).getName());
     }
 
     @Test
     void existsByEmail_returnsTrueIfEmailExists() {
+        repository.save(new User("Ada", "ada@example.com"));
 
+        assertTrue(repository.existsByEmail("ada@example.com"));
+        assertFalse(repository.existsByEmail("nonexistent@example.com"));
     }
 }
