@@ -26,9 +26,11 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private List<User> initialUsers;
+
     @BeforeEach
     void setUp() {
-
+        initialUsers = new ArrayList<>();
     }
 
     @Test
@@ -77,5 +79,32 @@ public class UserControllerTest {
         mockMvc.perform(get("/users/" + id))
                 .andExpect(status().isNotFound());
 
+    }
+
+    @Test
+    void getUsers_withNameParam_returnsFilteredUsers() throws Exception{
+        User user1 = new User("John", "john@example.com");
+        User user2 = new User("John", "john2@example.com");
+        User user3 = new User("Alice Brown", "alice@example.com");
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user1)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user2)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user3)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/users?name=John"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].name").value(org.hamcrest.Matchers.containsStringIgnoringCase("john")));
     }
 }
