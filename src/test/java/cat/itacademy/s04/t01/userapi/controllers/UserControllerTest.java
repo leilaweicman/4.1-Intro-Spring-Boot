@@ -37,4 +37,16 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
+
+    @Test
+    void createUser_returnsUserWithId() throws Exception{
+        User user = new User("Ada", "ada@example.com");
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.name").value("Ada"))
+                .andExpect(jsonPath("$.email").value("ada@example.com"));
+    }
 }
