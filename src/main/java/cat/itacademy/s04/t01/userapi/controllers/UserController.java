@@ -19,7 +19,7 @@ public class UserController {
         }
 
         return users.stream()
-                .filter(user -> user.getName().toLowerCase().contains(name.toLowerCase()))
+                .filter(user -> user.getName().equalsIgnoreCase(name))
                 .toList();
     }
 
