@@ -17,13 +17,19 @@ public class InMemoryUserRepositoryTest {
     @Test
     void save_returnsAddedUser() {
         User user = new User("John", "john@example.com");
-        repository.save(user);
-        assertEquals(1, repository.findAll().size());
+        User savedUser = repository.save(user);
+
+        assertNotNull(savedUser.getId());
+        assertEquals("John", savedUser.getName());
+        assertEquals("john@example.com", savedUser.getEmail());
     }
 
     @Test
     void findAll_returnsAllUsers() {
+        repository.save(new User("Ada", "ada@example.com"));
+        repository.save(new User("Alan", "alan@example.com"));
 
+        assertEquals(2, repository.findAll().size());
     }
 
     @Test
