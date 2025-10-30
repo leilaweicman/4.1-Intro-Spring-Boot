@@ -3,6 +3,9 @@ package cat.itacademy.s04.t01.userapi.repositories;
 import cat.itacademy.s04.t01.userapi.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryUserRepositoryTest {
@@ -42,7 +45,14 @@ public class InMemoryUserRepositoryTest {
 
     @Test
     void searchByName_returnsUsersMatchingName() {
+        repository.save(new User("Ada", "ada@example.com"));
+        repository.save(new User("Alan", "alan@example.com"));
+        repository.save(new User("Grace", "grace@example.com"));
 
+        List<User> users = repository.searchByName("Ada");
+
+        assertEquals(1, users.size());
+        assertEquals("Ada Lovelace", users.get(0).getName());
     }
 
     @Test
