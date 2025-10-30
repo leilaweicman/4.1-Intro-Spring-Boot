@@ -24,7 +24,8 @@ public class UserController {
         return user;
     }
 
-    public User getUser(@PathVariable UUID id) {
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable UUID id) {
         return users.stream()
                 .filter(user -> user.getId().equals(id))
                 .findFirst()
