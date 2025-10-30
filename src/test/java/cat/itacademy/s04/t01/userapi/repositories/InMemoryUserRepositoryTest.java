@@ -34,7 +34,10 @@ public class InMemoryUserRepositoryTest {
 
     @Test
     void findById_returnsExistingUser() {
+        User user = repository.save(new User("Ada", "ada@example.com"));
 
+        assertTrue(repository.findById(user.getId()).isPresent());
+        assertEquals("Ada", repository.findById(user.getId()).get().getName());
     }
 
     @Test
