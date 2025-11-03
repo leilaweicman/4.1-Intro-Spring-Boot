@@ -2,6 +2,7 @@ package cat.itacademy.s04.t01.userapi.controllers;
 
 import cat.itacademy.s04.t01.userapi.exceptions.EmailAlreadyExistsException;
 import cat.itacademy.s04.t01.userapi.models.User;
+import cat.itacademy.s04.t01.userapi.repositories.InMemoryUserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,8 +29,16 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private InMemoryUserRepository repository;
+
     @BeforeEach
     void setUp() {
+    }
+
+    @BeforeEach
+    void cleanUp() {
+        repository.clear();
     }
 
     @Test
