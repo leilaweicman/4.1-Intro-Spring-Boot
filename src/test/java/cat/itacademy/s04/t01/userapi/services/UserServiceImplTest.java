@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,5 +32,23 @@ class UserServiceImplTest {
                 .hasMessageContaining("Email already exists");
 
         verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void createUser_shouldSaveUserWhenEmailNotExists() {
+        User user = new User("Ada", "ada@example.com");
+
+        when(userRepository.existsByEmail("ada@example.com")).thenReturn(false);
+
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        User result = userService.createUser(user);
+
+        verify(userRepository).save(user);
+
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getName()).isEqualToIgnoringCase("Ada");
+        assertThat(result.getEmail()).isEqualToIgnoringCase("ada@example.com");
     }
 }
