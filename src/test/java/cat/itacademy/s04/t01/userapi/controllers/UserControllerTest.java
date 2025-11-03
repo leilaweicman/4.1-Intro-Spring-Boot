@@ -1,5 +1,6 @@
 package cat.itacademy.s04.t01.userapi.controllers;
 
+import cat.itacademy.s04.t01.userapi.exceptions.EmailAlreadyExistsException;
 import cat.itacademy.s04.t01.userapi.models.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -101,5 +104,26 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].name").value(org.hamcrest.Matchers.containsStringIgnoringCase("john")));
+    }
+
+    @Test
+    void createUser_returnsConflictIfEmailAlreadyExists() throws Exception {
+        User user1 = new User("Ada Lovelace", "ada@example.com");
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user1)))
+                .andExpect(status().isCreated());
+
+        User user2 = new User("Ada Duplicate", "ada@example.com");
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user2)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(result ->
+                        assertThat(result.getResolvedException())
+                                .isInstanceOf(EmailAlreadyExistsException.class)
+                                .hasMessageContaining("Email already exists"));
+
     }
 }
